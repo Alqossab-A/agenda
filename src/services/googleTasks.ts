@@ -1,23 +1,47 @@
 import type { Task, TaskList } from '../types'
 
+const BASE = '/api/tasks'
+
 export const fetchTaskLists = async (): Promise<TaskList[]> => {
-  // GET https://www.googleapis.com/tasks/v1/users/@me/lists
-  console.warn('fetchTaskLists: not implemented — using mock data')
-  return []
+  const res = await fetch(`${BASE}/lists`)
+  if (!res.ok) throw new Error('Failed to fetch task lists')
+  return res.json()
 }
 
 export const fetchTasks = async (listId: string): Promise<Task[]> => {
-  // GET https://www.googleapis.com/tasks/v1/lists/{listId}/tasks
-  console.warn('fetchTasks: not implemented', listId)
-  return []
+  const res = await fetch(`${BASE}/lists/${listId}/tasks`)
+  if (!res.ok) throw new Error('Failed to fetch tasks')
+  return res.json()
 }
 
-export const createTask = async (listId: string, task: Omit<Task, 'id'>): Promise<void> => {
-  // POST https://www.googleapis.com/tasks/v1/lists/{listId}/tasks
-  console.warn('createTask: not implemented', listId, task)
+export const createTask = async (
+  listId: string,
+  task: Pick<Task, 'title'>
+): Promise<Task> => {
+  const res = await fetch(`${BASE}/lists/${listId}/tasks`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(task),
+  })
+  if (!res.ok) throw new Error('Failed to create task')
+  return res.json()
 }
 
-export const updateTask = async (listId: string, taskId: string, patch: Partial<Task>): Promise<void> => {
-  // PATCH https://www.googleapis.com/tasks/v1/lists/{listId}/tasks/{taskId}
-  console.warn('updateTask: not implemented', listId, taskId, patch)
+export const updateTask = async (
+  listId: string,
+  taskId: string,
+  patch: Partial<Task>
+): Promise<Task> => {
+  const res = await fetch(`${BASE}/lists/${listId}/tasks/${taskId}`, {
+    method:  'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(patch),
+  })
+  if (!res.ok) throw new Error('Failed to update task')
+  return res.json()
+}
+
+export const deleteTask = async (listId: string, taskId: string): Promise<void> => {
+  const res = await fetch(`${BASE}/lists/${listId}/tasks/${taskId}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete task')
 }

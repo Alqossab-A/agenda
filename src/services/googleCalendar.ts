@@ -1,19 +1,26 @@
 import type { CalendarEvent } from '../types'
 
-// TODO: wire with VITE_GOOGLE_CLIENT_ID + VITE_GOOGLE_API_KEY
+const BASE = '/api/calendar'
 
 export const fetchTodaysEvents = async (): Promise<CalendarEvent[]> => {
-  // GET https://www.googleapis.com/calendar/v3/calendars/primary/events
-  console.warn('fetchTodaysEvents: not implemented — using mock data')
-  return []
+  const res = await fetch(`${BASE}/events`)
+  if (!res.ok) throw new Error('Failed to fetch events')
+  return res.json()
 }
 
-export const createEvent = async (event: Omit<CalendarEvent, 'id'>): Promise<void> => {
-  // POST https://www.googleapis.com/calendar/v3/calendars/primary/events
-  console.warn('createEvent: not implemented', event)
+export const createEvent = async (
+  event: Pick<CalendarEvent, 'title' | 'startHour' | 'duration'>
+): Promise<CalendarEvent> => {
+  const res = await fetch(`${BASE}/events`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(event),
+  })
+  if (!res.ok) throw new Error('Failed to create event')
+  return res.json()
 }
 
-export const deleteCalendarEvent = async (eventId: string): Promise<void> => {
-  // DELETE https://www.googleapis.com/calendar/v3/calendars/primary/events/{eventId}
-  console.warn('deleteCalendarEvent: not implemented', eventId)
+export const deleteCalendarEvent = async (id: string): Promise<void> => {
+  const res = await fetch(`${BASE}/events/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete event')
 }
