@@ -1,26 +1,26 @@
-import { Hono }   from 'hono'
-import { handle } from 'hono/vercel'
+import { Hono } from "hono";
+import { handle } from "hono/vercel";
 
-export const config = { runtime: 'edge' }
+export const config = { runtime: "edge" };
 
-const app = new Hono()
+const app = new Hono();
 
-app.get('/api/auth/google', (c) => {
+app.get("/api/auth/google", (c) => {
   const params = new URLSearchParams({
-    client_id:     process.env.GOOGLE_CLIENT_ID!,
-    redirect_uri:  process.env.GOOGLE_REDIRECT_URI!,
-    response_type: 'code',
+    client_id: process.env.GOOGLE_CLIENT_ID!,
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
+    response_type: "code",
     scope: [
-      'https://www.googleapis.com/auth/calendar',
-      'https://www.googleapis.com/auth/tasks',
-    ].join(' '),
-    access_type: 'offline',
-    prompt:      'consent',
-  })
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/tasks",
+    ].join(" "),
+    access_type: "offline",
+    prompt: "consent",
+  });
 
   return c.redirect(
-    `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
-  )
-})
+    `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+  );
+});
 
-export default handle(app)
+export default handle(app);
