@@ -10,19 +10,20 @@ export const fetchTodaysEvents = async (): Promise<CalendarEvent[]> => {
 }
 
 export const createEvent = async (
-  event: Pick<CalendarEvent, "title" | "startHour" | "duration">,
-): Promise<CalendarEvent> => {
-  const res = await fetch("/api/calendar/events", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ...event,
+  event: { title: string; startMin: number; endMin: number }
+): Promise<void> => {
+  const res = await fetch('/api/calendar/events', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({
+      title:    event.title,
+      startMin: event.startMin,
+      endMin:   event.endMin,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }),
-  });
-  if (!res.ok) throw new Error("Failed to create event");
-  return res.json();
-};
+  })
+  if (!res.ok) throw new Error('Failed to create event')
+}
 
 export const deleteCalendarEvent = async (id: string): Promise<void> => {
   const res = await fetch(`${BASE}/events/${id}`, { method: "DELETE" });

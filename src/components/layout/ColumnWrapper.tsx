@@ -11,16 +11,14 @@ export const ColumnWrapper: FC<ColumnWrapperProps> = ({
   badge,
   children,
 }) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      flex: 1,
-      minWidth: 0,
-      height: "100%",
-      borderRight: "1px solid #1f2937",
-    }}
-  >
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    minWidth: 0,
+    height: '100%',
+    borderRight: '1px solid #1f2937',
+  }}>
     <div
       style={{
         flexShrink: 0,

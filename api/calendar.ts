@@ -84,38 +84,44 @@ app.get('/api/calendar/events', async (c) => {
 })
 
 /** POST /api/calendar/events — create an event */
-app.post("/api/calendar/events", async (c) => {
-  const accessToken = c.get("accessToken");
-  const { title, startHour, duration, timeZone } = await c.req.json();
+app.post('/api/calendar/events', async (c) => {
+  const accessToken                              = c.get('accessToken')
+  const { title, startMin, endMin, timeZone }   = await c.req.json()
 
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-CA", { timeZone }); // YYYY-MM-DD
-  const startStr = `${dateStr}T${String(startHour).padStart(2, "0")}:00:00`;
-  const endHour = startHour + duration;
-  const endStr = `${dateStr}T${String(endHour).padStart(2, "0")}:00:00`;
+  const now     = new Date()
+  const dateStr = now.toLocaleDateString('en-CA', { timeZone }) // "2026-05-04"
+
+  // Convert total minutes to HH:MM strings
+  const toTimeStr = (totalMin: number): string => {
+    const h = Math.floor(totalMin / 60) % 24
+    const m = totalMin % 60
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`
+  }
+
+  // Handle overnight (endMin < startMin)
+  const endDate = endMin < startMin
+    ? new Date(new Date(`${dateStr}T00:00:00`).getTime() + 24 * 60 * 60 * 1000)
+        .toLocaleDateString('en-CA', { timeZone })
+    : dateStr
 
   const googleEvent = {
     summary: title,
-    start: { dateTime: startStr, timeZone },
-    end: { dateTime: endStr, timeZone },
-  };
+    start:   { dateTime: `${dateStr}T${toTimeStr(startMin)}`, timeZone },
+    end:     { dateTime: `${endDate}T${toTimeStr(endMin)}`,   timeZone },
+  }
 
   const res = await fetch(`${BASE}/calendars/primary/events`, {
-    method: "POST",
+    method:  'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      Authorization:  `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(googleEvent),
-  });
+  })
 
-  if (!res.ok)
-    return c.json(
-      { error: "Failed to create event" },
-      res.status as ContentfulStatusCode,
-    );
-  return c.json(await res.json());
-});
+  if (!res.ok) return c.json({ error: 'Failed to create event' }, res.status as ContentfulStatusCode)
+  return c.json(await res.json())
+})
 
 /** DELETE /api/calendar/events/:id */
 app.delete("/api/calendar/events/:id", async (c) => {

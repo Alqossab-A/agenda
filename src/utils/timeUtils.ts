@@ -6,3 +6,4 @@ export const formatHour = (h: number): string => {
 
 export const HOURS: number[] = Array.from({ length: 24 }, (_, i) => i + 1);
 export const SLOT_H = 64; // px — 1 hour row height
+export const SLOT_H_MOBILE = 48 // mobile — fits more hours on screen
