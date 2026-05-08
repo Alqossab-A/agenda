@@ -34,6 +34,7 @@ const BRAIN_DUMP_NAME = "Brain Dump";
 interface GCalEvent {
 	id: string;
 	summary?: string;
+	colorId?: string,
 	start?: { dateTime?: string; date?: string };
 	end?: { dateTime?: string; date?: string };
 }
@@ -51,23 +52,14 @@ interface GTaskList {
 
 // ── Adapters ──────────────────────────────────────────────
 const adaptCalendarEvent = (e: GCalEvent): CalendarEvent => {
-	const startDt = e.start?.dateTime ?? e.start?.date ?? "";
-	const endDt = e.end?.dateTime ?? e.end?.date ?? "";
-	const startDate = new Date(startDt);
-	const endDate = new Date(endDt);
-	const startHour = startDate.getHours() || 1;
-	const duration = Math.max(
-		1,
-		Math.round((endDate.getTime() - startDate.getTime()) / 3_600_000),
-	);
-	return {
-		id: e.id,
-		title: e.summary ?? "(No title)",
-		startHour,
-		duration,
-		source: "google",
-	};
-};
+	const startDt = e.start?.dateTime ?? e.start?.date ?? ''
+	const endDt = e.end?.dateTime ?? e.end?.date ?? ''
+	const startDate = new Date(startDt)
+	const endDate = new Date(endDt)
+	const startHour = (startDate.getHours() + startDate.getMinutes() / 60) || 1
+	const duration = Math.max(0.25, (endDate.getTime() - startDate.getTime()) / 3_600_000)
+	return { id: e.id, title: e.summary ?? '(No title)', startHour, duration, source: 'google', colorId: e.colorId }
+}
 
 const adaptTask = (t: GTask): Task => ({
 	id: t.id,
@@ -88,7 +80,7 @@ interface AppContextValue {
 	deleteBrainItem: (id: string) => void;
 
 	events: CalendarEvent[];
-	addEvent: (title: string, startMin: number, endMin: number) => void;
+	addEvent: (title: string, startMin: number, endMin: number, listTitle?: string) => void;
 	deleteEvent: (id: string) => void;
 
 	taskLists: TaskList[];
@@ -218,15 +210,16 @@ export const AppProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	};
 
 	// ── Events ──────────────────────────────────────────────
-	const addEvent = async (title: string, startMin: number, endMin: number) => {
+	const addEvent = async (title: string, startMin: number, endMin: number, listTitle?: string) => {
 		try {
-			await apiCreateEvent({ title, startMin, endMin })
+			await apiCreateEvent({ title, startMin, endMin, listTitle })
 			const rawEvents: GCalEvent[] = await fetchTodaysEvents()
 			setEvents(rawEvents.map(adaptCalendarEvent))
 		} catch (err) {
 			console.error('Failed to create event:', err)
 		}
 	}
+
 	const deleteEvent = async (id: string) => {
 		try {
 			await deleteCalendarEvent(id);

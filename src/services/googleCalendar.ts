@@ -1,4 +1,5 @@
 import type { CalendarEvent } from "../types";
+import { listTitleToColorId } from '../utils/calendarColors';
 
 const BASE = "/api/calendar";
 
@@ -10,7 +11,7 @@ export const fetchTodaysEvents = async (): Promise<CalendarEvent[]> => {
 }
 
 export const createEvent = async (
-  event: { title: string; startMin: number; endMin: number }
+  event: { title: string; startMin: number; endMin: number; listTitle?: string }
 ): Promise<void> => {
   const res = await fetch('/api/calendar/events', {
     method:  'POST',
@@ -19,6 +20,7 @@ export const createEvent = async (
       title:    event.title,
       startMin: event.startMin,
       endMin:   event.endMin,
+      colorId:  event.listTitle ? listTitleToColorId(event.listTitle) : '1',
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }),
   })

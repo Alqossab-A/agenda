@@ -6,11 +6,12 @@ export interface BrainDumpItem {
 export type Source = "google" | "manual";
 
 export interface CalendarEvent {
-  id: string;
-  title: string;
-  startHour: number; // 1–24
-  duration: number; // hours
-  source: Source;
+  id:        string
+  title:     string
+  startHour: number
+  duration:  number
+  source:    Source
+  colorId?:  string
 }
 
 export interface Task {
@@ -23,4 +24,14 @@ export interface TaskList {
   id: string;
   title: string;
   tasks: Task[];
+}
+
+export interface WeatherData {
+  temp:      number | string
+  condition: string
+  wind:      number
+  humidity:  number
+  station:   string
+  low:       number   
+  high:      number    
 }

@@ -85,20 +85,18 @@ app.get('/api/calendar/events', async (c) => {
 
 /** POST /api/calendar/events — create an event */
 app.post('/api/calendar/events', async (c) => {
-  const accessToken                              = c.get('accessToken')
-  const { title, startMin, endMin, timeZone }   = await c.req.json()
+  const accessToken = c.get('accessToken')
+  const { title, startMin, endMin, colorId, timeZone } = await c.req.json()
 
-  const now     = new Date()
-  const dateStr = now.toLocaleDateString('en-CA', { timeZone }) // "2026-05-04"
+  const now      = new Date()
+  const dateStr  = now.toLocaleDateString('en-CA', { timeZone })
 
-  // Convert total minutes to HH:MM strings
   const toTimeStr = (totalMin: number): string => {
     const h = Math.floor(totalMin / 60) % 24
     const m = totalMin % 60
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`
   }
 
-  // Handle overnight (endMin < startMin)
   const endDate = endMin < startMin
     ? new Date(new Date(`${dateStr}T00:00:00`).getTime() + 24 * 60 * 60 * 1000)
         .toLocaleDateString('en-CA', { timeZone })
@@ -106,17 +104,15 @@ app.post('/api/calendar/events', async (c) => {
 
   const googleEvent = {
     summary: title,
+    colorId: colorId ?? '1',   // ← add this
     start:   { dateTime: `${dateStr}T${toTimeStr(startMin)}`, timeZone },
     end:     { dateTime: `${endDate}T${toTimeStr(endMin)}`,   timeZone },
   }
 
   const res = await fetch(`${BASE}/calendars/primary/events`, {
     method:  'POST',
-    headers: {
-      Authorization:  `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(googleEvent),
+    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body:    JSON.stringify(googleEvent),
   })
 
   if (!res.ok) return c.json({ error: 'Failed to create event' }, res.status as ContentfulStatusCode)
