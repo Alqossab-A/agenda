@@ -19,29 +19,45 @@ const weatherLabel = (code: number): string => {
 }
 
 app.get('*', async (c) => {
-  const url =
-    'https://api.open-meteo.com/v1/forecast' +
-    '?latitude=43.2557&longitude=-79.8711' +
-    '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code' +
-    '&daily=temperature_2m_max,temperature_2m_min' +
-    '&timezone=America%2FToronto'
+  const apiKey = process.env.PIRATE_WEATHER_KEY;
+  
+  if (!apiKey) {
+    console.error("Missing PIRATE_WEATHER_KEY");
+    return c.json({ error: 'Server configuration error' }, 500);
+  }
 
-  const response = await fetch(url)
-  if (!response.ok) return c.json({ error: 'Upstream error' }, 500)
+  const lat = '43.2557';
+  const lon = '-79.8711';
+  
+  const url = `https://api.pirateweather.net/forecast/${apiKey}/${lat},${lon}?version=2&units=ca&exclude=minutely,hourly,alerts,flags`;
 
-  const data = await response.json()
-  const cur  = data.current
-  const daily = data.daily
+  try {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error(`Pirate Weather responded with ${response.status}`);
+      return c.json({ error: 'Weather provider unavailable' }, 503);
+    }
 
-  return c.json({
-    temp:      Math.round(cur.temperature_2m),
-    condition: weatherLabel(cur.weather_code),
-    wind:      Math.round(cur.wind_speed_10m),
-    humidity:  cur.relative_humidity_2m,
-    station:   'Hamilton, ON',
-    low:       Math.round(daily.temperature_2m_min[0]),   // ← today's low
-    high:      Math.round(daily.temperature_2m_max[0]),   // ← today's high
-  })
-})
+    const data = await response.json();
+    
+    const cur = data.currently || {};
+    const today = data.daily?.data?.[0] || {};
 
-export default handle(app)
+    return c.json({
+      temp:      Math.round(cur.temperature ?? 0),
+      condition: cur.summary ?? 'Clear',
+      wind:      Math.round(cur.windSpeed ?? 0),
+      humidity:  Math.round((cur.humidity ?? 0) * 100), 
+      station:   'Hamilton, ON (HRRR High-Res)',
+      low:       today.temperatureMin !== undefined ? Math.round(today.temperatureMin) : null,
+      high:      today.temperatureMax !== undefined ? Math.round(today.temperatureMax) : null,
+    });
+
+  } catch (err) {
+    console.error("Fetch error:", err);
+    return c.json({ error: 'Failed to fetch weather data' }, 500);
+  }
+});
+
+export default handle(app);

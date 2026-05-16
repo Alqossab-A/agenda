@@ -58,7 +58,7 @@ const adaptCalendarEvent = (e: GCalEvent): CalendarEvent => {
 	const endDate = new Date(endDt)
 	const startHour = (startDate.getHours() + startDate.getMinutes() / 60) || 1
 	const duration = Math.max(0.25, (endDate.getTime() - startDate.getTime()) / 3_600_000)
-	return { id: e.id, title: e.summary ?? '(No title)', startHour, duration, source: 'google', colorId: e.colorId }
+	return { id: e.id, title: e.summary ?? '(No title)', startHour, duration, colorId: e.colorId }
 }
 
 const adaptTask = (t: GTask): Task => ({
