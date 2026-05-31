@@ -47,7 +47,7 @@ export const WeatherWidget: FC<WeatherWidgetProps> = ({ isMobile }) => {
         style={{
           fontSize: 28,
           fontWeight: 700,
-          color: '#e2e8f0',
+          color: '#6b7280',
           lineHeight: 1,
         }}
       >

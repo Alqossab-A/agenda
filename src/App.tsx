@@ -1,42 +1,38 @@
 import { useEffect, useState } from 'react'
 import { ThreeColumnLayout } from './components/layout/ThreeColumnLayout'
-import { AppProvider } from './context/AppContext'
-import { WeatherWidget } from './components/weather/WeatherWidget'
+import { AppProvider }        from './context/AppContext'
+import { WeatherWidget }      from './components/weather/WeatherWidget'
 
 type AuthState = 'loading' | 'authenticated' | 'unauthenticated'
 
 function LoginScreen() {
   return (
     <div style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#111827',
-      fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      height: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: '#fafaf9',
+      fontFamily: "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
       gap: 24,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{
-          width: 40, height: 40, background: '#4f46e5', borderRadius: 10,
+          width: 40, height: 40, background: '#6366f1', borderRadius: 10,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 20, fontWeight: 800, color: '#fff',
         }}>S</div>
-        <span style={{ fontSize: 24, fontWeight: 700, color: '#e2e8f0' }}>Sunflow</span>
+        <span style={{ fontSize: 24, fontWeight: 700, color: '#1c1917' }}>Sunflow</span>
       </div>
-
-      <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
+      <p style={{ color: '#a8a29e', fontSize: 14, margin: 0 }}>
         Your personal productivity dashboard
       </p>
-
       <button
         onClick={() => { window.location.href = '/api/auth/google' }}
         style={{
           display: 'flex', alignItems: 'center', gap: 12,
-          background: '#fff', color: '#111827', border: 'none',
-          borderRadius: 8, padding: '12px 24px', fontSize: 14,
-          fontWeight: 600, cursor: 'pointer',
+          background: '#fff', color: '#1c1917',
+          border: '1px solid #e7e5e4', borderRadius: 8,
+          padding: '12px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
         }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18">
@@ -55,14 +51,13 @@ function LoadingScreen() {
   return (
     <div style={{
       height: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', background: '#111827',
+      justifyContent: 'center', background: '#fafaf9',
     }}>
-      <div style={{ color: '#6b7280', fontSize: 13 }}>Loading…</div>
+      <div style={{ color: '#a8a29e', fontSize: 13 }}>Loading…</div>
     </div>
   )
 }
 
-// Detect mobile for passing to WeatherWidget
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   useEffect(() => {
@@ -95,32 +90,28 @@ export default function App() {
       <div style={{
         height: '100vh', width: '100%',
         display: 'flex', flexDirection: 'column',
-        background: '#111827', color: '#f9fafb',
-        fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+        background: '#fafaf9', color: '#1c1917',
+        fontFamily: "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
         overflow: 'hidden',
       }}>
         <header style={{
           flexShrink: 0, display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', padding: '0 20px',
-          height: 48, borderBottom: '1px solid #1f2937', background: '#0f172a',
+          height: 48, borderBottom: '1px solid #e7e5e4', background: '#fff',
         }}>
-          {/* Weather replaces logo */}
           <WeatherWidget isMobile={isMobile} />
-
-          <span style={{ fontSize: 13, color: '#6b7280' }}>{today}</span>
-
+          <span style={{ fontSize: 13, color: '#a8a29e' }}>{today}</span>
           <button
             onClick={() => { window.location.href = '/api/auth/logout' }}
             style={{
-              fontSize: 11, color: '#6b7280', background: 'transparent',
-              border: '1px solid #374151', borderRadius: 4,
+              fontSize: 11, color: '#78716c', background: 'transparent',
+              border: '1px solid #e7e5e4', borderRadius: 4,
               padding: '4px 10px', cursor: 'pointer',
             }}
           >
             Sign out
           </button>
         </header>
-
         <ThreeColumnLayout />
       </div>
     </AppProvider>

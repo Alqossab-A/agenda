@@ -1,13 +1,12 @@
 import type { CalendarEvent } from '../../types'
-import { FC, useState }       from 'react'
-import { colorIdToHex }       from '../../utils/calendarColors'
+import { FC, useState } from 'react'
+import { colorIdToHex } from '../../utils/calendarColors'
 
 interface TimeBoxEventProps {
-  event:    CalendarEvent
+  event: CalendarEvent
   onDelete: (e: React.MouseEvent) => void
 }
 
-/** "30m", "1h", "1.5h" */
 const formatDuration = (hours: number): string => {
   if (hours < 1) return `${Math.round(hours * 60)}m`
   const val = +hours.toFixed(1)
@@ -16,54 +15,42 @@ const formatDuration = (hours: number): string => {
 
 export const TimeBoxEvent: FC<TimeBoxEventProps> = ({ event, onDelete }) => {
   const [hov, setHov] = useState<boolean>(false)
-  const color         = colorIdToHex(event.colorId)
+  const color = colorIdToHex(event.colorId)
 
   return (
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        width:         '100%',
-        height:        '100%',
-        borderLeft:    `3px solid ${color}`,
-        background:    `${color}22`,
-        borderRadius:  4,
-        padding:       '4px 8px',
-        overflow:      'hidden',
-        display:       'flex',
+        width: '100%', height: '100%',
+        borderLeft: `3px solid ${color}`,
+        background: `${color}`,
+        borderRadius: 4,
+        padding: '4px 8px',
+        overflow: 'hidden',
+        display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
       }}
     >
-      {/* Title + duration on same line */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4 }}>
         <p style={{
-          fontSize:     12,
-          fontWeight:   600,
-          color:        '#f3f4f6',
-          margin:       0,
-          overflow:     'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace:   'nowrap',
-          flex:         1,
+          fontSize: 12, fontWeight: 600, color: '#ffffff',
+          margin: 0, overflow: 'hidden', textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap', flex: 1,
         }}>
           {event.title}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 11, color: '#9ca3af' }}>
+          <span style={{ fontSize: 11, color: '#ffffff' }}>
             {formatDuration(event.duration)}
           </span>
           {hov && (
             <button
               onClick={onDelete}
               style={{
-                fontSize:   14,
-                color:      '#ef4444',
-                background: 'transparent',
-                border:     'none',
-                cursor:     'pointer',
-                lineHeight: 1,
-                padding:    0,
+                fontSize: 14, color: '#ef4444', background: 'transparent',
+                border: 'none', cursor: 'pointer', lineHeight: 1, padding: 0,
               }}
             >×</button>
           )}

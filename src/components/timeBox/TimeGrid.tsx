@@ -1,14 +1,14 @@
 import type { CalendarEvent } from '../../types'
 import { FC, useState, useRef, useEffect } from 'react'
-import { useApp }             from '../../context/AppContext'
+import { useApp } from '../../context/AppContext'
 import { HOURS, SLOT_H, SLOT_H_MOBILE } from '../../utils/timeUtils'
-import { TimeSlot }           from './TimeSlot'
-import { TimeBoxEvent }       from './TimeBoxEvent'
+import { TimeSlot } from './TimeSlot'
+import { TimeBoxEvent } from './TimeBoxEvent'
 
 // ── Lane assignment algorithm ─────────────────────────────
 interface EventLayout {
-  event:      CalendarEvent
-  lane:       number
+  event: CalendarEvent
+  lane: number
   totalLanes: number
 }
 
@@ -50,7 +50,7 @@ interface TimeGridProps {
 
 export const TimeGrid: FC<TimeGridProps> = ({ isMobile }) => {
   const { events, deleteEvent } = useApp()
-  const slotH  = isMobile ? SLOT_H_MOBILE : SLOT_H
+  const slotH = isMobile ? SLOT_H_MOBILE : SLOT_H
   const labelW = isMobile ? 56 : 68
 
   const getNow = (): number => {
@@ -70,7 +70,7 @@ export const TimeGrid: FC<TimeGridProps> = ({ isMobile }) => {
     lineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [])
 
-  const lineTop: number   = (nowMin / 60 - 1) * slotH
+  const lineTop: number = (nowMin / 60 - 1) * slotH
   const showLine: boolean = nowMin >= 60 && nowMin <= 24 * 60
 
   const eventLayouts = computeEventLayouts(events)
@@ -85,14 +85,14 @@ export const TimeGrid: FC<TimeGridProps> = ({ isMobile }) => {
         <div
           ref={lineRef}
           style={{
-            position:       'absolute',
-            left:           0,
-            right:          0,
-            top:            lineTop,
-            display:        'flex',
-            alignItems:     'center',
-            zIndex:         30,
-            pointerEvents:  'none',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: lineTop,
+            display: 'flex',
+            alignItems: 'center',
+            zIndex: 30,
+            pointerEvents: 'none',
           }}
         >
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', marginLeft: -4, flexShrink: 0 }} />
@@ -103,13 +103,13 @@ export const TimeGrid: FC<TimeGridProps> = ({ isMobile }) => {
       {/* ── Events — absolutely positioned on continuous timeline ── */}
       {eventLayouts.map(({ event, lane, totalLanes }) => {
         // top: distance from 1AM (hour 1 = y:0)
-        const top    = (event.startHour - 1) * slotH + 2
+        const top = (event.startHour - 1) * slotH + 2
         const height = event.duration * slotH - 4
 
         // horizontal: split the event area (right of label) into lanes
         // left  = labelW + lane  * eventAreaWidth / totalLanes
         // width = eventAreaWidth / totalLanes
-        const leftCalc  = `calc(${labelW}px + ${lane} * (100% - ${labelW}px) / ${totalLanes})`
+        const leftCalc = `calc(${labelW}px + ${lane} * (100% - ${labelW}px) / ${totalLanes})`
         const widthCalc = `calc((100% - ${labelW}px) / ${totalLanes} - 2rem)`
 
         return (
@@ -119,9 +119,9 @@ export const TimeGrid: FC<TimeGridProps> = ({ isMobile }) => {
               position: 'absolute',
               top,
               height,
-              left:     leftCalc,
-              width:    widthCalc,
-              zIndex:   10,
+              left: leftCalc,
+              width: widthCalc,
+              zIndex: 10,
             }}
           >
             <TimeBoxEvent
