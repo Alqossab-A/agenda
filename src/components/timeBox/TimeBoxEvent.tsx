@@ -48,10 +48,7 @@ export const TimeBoxEvent: FC<TimeBoxEventProps> = ({ event, onDelete }) => {
           {hov && (
             <button
               onClick={onDelete}
-              style={{
-                fontSize: 14, color: '#ef4444', background: 'transparent',
-                border: 'none', cursor: 'pointer', lineHeight: 1, padding: 0,
-              }}
+              style={{ flexShrink: 0, fontSize: 13, color: '#ffffff', background: 'rgba(0,0,0,0.2)', border: 'none', borderRadius: '50%', cursor: 'pointer', lineHeight: 1, padding: '0 4px', marginLeft: 4 }}
             >×</button>
           )}
         </div>

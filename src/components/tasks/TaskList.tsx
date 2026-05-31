@@ -1,15 +1,13 @@
-import type { TaskList }  from '../../types'
-import { FC, useState }   from 'react'
-import { TaskItem }       from './TaskItem'
-import { AddTaskInput }   from './AddTaskInput'
+import type { TaskList } from '../../types'
+import { FC, useState } from 'react'
+import { TaskItem } from './TaskItem'
+import { AddTaskInput } from './AddTaskInput'
 import { colorIdToHex, listTitleToColorId } from '../../utils/calendarColors'
 
 interface TaskListProps { list: TaskList }
 
 export const TaskListCard: FC<TaskListProps> = ({ list }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const done  = list.tasks.filter(t => t.completed).length
-  const total = list.tasks.length
   const color = colorIdToHex(listTitleToColorId(list.title))
 
   return (
@@ -22,21 +20,14 @@ export const TaskListCard: FC<TaskListProps> = ({ list }) => {
           background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: 4,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{
-            fontSize: 10, color,
-            display: 'inline-block',
-            transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-            transition: 'transform 0.15s ease', lineHeight: 1,
-          }}>▶</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, borderLeft: `0.3rem solid ${color}`, paddingLeft: '0.2rem' }}>
           <h3 style={{
             margin: 0, fontSize: 11, fontWeight: 700,
-            color, letterSpacing: '0.1em', textTransform: 'uppercase',
+            letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
             {list.title}
           </h3>
         </div>
-        <span style={{ fontSize: 11, color: '#a8a29e' }}>{done}/{total}</span>
       </button>
 
       {open && (
